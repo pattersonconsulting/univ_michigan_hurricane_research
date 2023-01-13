@@ -54,12 +54,16 @@ def cleanCensusData():
     df3.drop('geo', axis=1, inplace=True)
     df3['fips_code'] = df3['fips_code'].str[-5:]
 
-    #Joining
+    #Joining and filtering
     joined_df = df3.merge(df1, how='left').merge(df2, how='left')
+    df_filtered = joined_df[joined_df['median_2020_housing_value_usd'] != '-']
+    df_filtered['median_2020_housing_value_usd'] = df_filtered['median_2020_housing_value_usd'].astype('int')
+    df_filtered['estimated_total_property_value'] = df_filtered.median_2020_housing_value_usd * df_filtered.total_houses
 
-    rearranged_df = joined_df[['fips_code',
+    rearranged_df = df_filtered[['fips_code',
  'county',
  'state',
+ 'estimated_total_property_value',
  'median_2020_housing_value_usd',
  'owner_occupied_houses',
  'total_occupied',
